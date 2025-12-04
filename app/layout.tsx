@@ -45,8 +45,9 @@ export const viewport: Viewport = {
   themeColor: "#0f0f12",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5, // Allow zoom for accessibility
+  userScalable: true, // Allow pinch zoom for accessibility
+  viewportFit: "cover", // Support iOS safe areas
 }
 
 export default function RootLayout({

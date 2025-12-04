@@ -83,13 +83,20 @@ export function BottomNavigation() {
       animate={{ y: 0, opacity: 1 }}
       className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
     >
-      <div className="glass-card border-t border-border/50 px-2 py-2 pb-safe">
+      <div
+        className="glass-card border-t border-border/50 px-2 pt-2 pb-safe"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom, 8px), 8px)" }}
+      >
         <div className="flex items-center justify-around">
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href || (item.href === "/markets" && pathname.startsWith("/market/"))
             return (
-              <Link key={item.href} href={item.href} className="relative flex flex-col items-center gap-1 px-4 py-2">
+              <Link
+                key={item.href}
+                href={item.href}
+                className="relative flex flex-col items-center gap-1 px-4 py-2 min-w-[64px]"
+              >
                 {isActive && (
                   <motion.div
                     layoutId="activeTabMobile"

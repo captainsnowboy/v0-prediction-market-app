@@ -125,6 +125,9 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  /* Add safe area inset utilities for iOS */
+  --spacing-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --spacing-safe-top: env(safe-area-inset-top, 0px);
 }
 
 @layer base {
@@ -135,6 +138,8 @@
     @apply bg-background text-foreground;
     background: linear-gradient(180deg, oklch(0.08 0.01 280) 0%, oklch(0.06 0.01 280) 100%);
     min-height: 100vh;
+    min-height: 100dvh; /* Use dynamic viewport height for mobile */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
   }
 }
 
@@ -175,4 +180,9 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Add padding-bottom safe area utility */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 8px);
 }
