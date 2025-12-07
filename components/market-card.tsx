@@ -36,7 +36,8 @@ export function MarketCard({ market, index = 0 }: MarketCardProps) {
         <motion.div
           whileHover={{ scale: 1.02, y: -4 }}
           whileTap={{ scale: 0.98 }}
-          className="glass-card glass-card-hover rounded-2xl p-5 cursor-pointer glow-primary transition-all duration-300"
+          className="glass-card rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_30px_rgba(136,85,255,0.15)]"
+          style={{ borderWidth: "1px" }}
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
@@ -96,7 +97,7 @@ export function MarketCardHorizontal({ market, index = 0 }: MarketCardProps) {
         <motion.div
           whileHover={{ scale: 1.02, y: -2 }}
           whileTap={{ scale: 0.98 }}
-          className="glass-card glass-card-hover rounded-2xl p-5 cursor-pointer h-full"
+          className="glass-card rounded-2xl p-5 cursor-pointer h-full transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_25px_rgba(136,85,255,0.12)]"
         >
           <div className="flex flex-col gap-3">
             <span className="px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium w-fit">
