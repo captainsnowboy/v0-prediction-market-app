@@ -25,10 +25,34 @@ export function TopNavigation() {
       <div className="glass-card border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">O</span>
-              </div>
+            <Link href="/" className="flex items-center gap-3">
+              <svg width="32" height="32" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="navGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#0052FF" />
+                    <stop offset="100%" stopColor="#3B82F6" />
+                  </linearGradient>
+                  <filter id="navGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="56"
+                  stroke="url(#navGradient)"
+                  strokeWidth="3"
+                  fill="none"
+                  filter="url(#navGlow)"
+                />
+                <ellipse cx="60" cy="60" rx="32" ry="18" stroke="url(#navGradient)" strokeWidth="2.5" fill="none" />
+                <circle cx="60" cy="60" r="10" fill="url(#navGradient)" />
+                <circle cx="63" cy="57" r="3" fill="white" opacity="0.9" />
+              </svg>
               <span className="text-xl font-bold gradient-text">Oracle</span>
             </Link>
 

@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cantonGradientIcon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0052FF"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <filter id="glowIcon" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Black background -->
+  <rect width="512" height="512" fill="#000000"/>
+  
+  <!-- Outer circle ring -->
+  <circle cx="256" cy="256" r="200" stroke="url(#cantonGradientIcon)" stroke-width="6" fill="none" filter="url(#glowIcon)"/>
+  
+  <!-- Eye shape - outer -->
+  <path d="M256 166C196 166 144 205 116 256C144 307 196 346 256 346C316 346 368 307 396 256C368 205 316 166 256 166Z" 
+        stroke="url(#cantonGradientIcon)" stroke-width="5" fill="none"/>
+  
+  <!-- Iris circle -->
+  <circle cx="256" cy="256" r="55" fill="url(#cantonGradientIcon)" filter="url(#glowIcon)"/>
+  
+  <!-- Pupil -->
+  <circle cx="256" cy="256" r="25" fill="#000000"/>
+  
+  <!-- Light reflection -->
+  <circle cx="242" cy="242" r="10" fill="#ffffff" opacity="0.9"/>
+  <circle cx="268" cy="264" r="5" fill="#ffffff" opacity="0.5"/>
+</svg>

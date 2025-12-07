@@ -1,0 +1,51 @@
+<svg width="600" height="160" viewBox="0 0 600 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cantonGradientBlack" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0052FF"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="textGradientBlack" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0e0e0"/>
+    </linearGradient>
+    <filter id="glowBlack" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Black background -->
+  <rect width="600" height="160" fill="#000000"/>
+  
+  <!-- Icon -->
+  <g transform="translate(30, 10)">
+    <!-- Outer circle ring -->
+    <circle cx="70" cy="70" r="60" stroke="url(#cantonGradientBlack)" stroke-width="4" fill="none" filter="url(#glowBlack)"/>
+    
+    <!-- Eye shape -->
+    <path d="M70 40C50 40 32 52 20 70C32 88 50 100 70 100C90 100 108 88 120 70C108 52 90 40 70 40Z" 
+          stroke="url(#cantonGradientBlack)" stroke-width="3" fill="none"/>
+    
+    <!-- Iris -->
+    <circle cx="70" cy="70" r="18" fill="url(#cantonGradientBlack)" filter="url(#glowBlack)"/>
+    
+    <!-- Pupil -->
+    <circle cx="70" cy="70" r="8" fill="#000000"/>
+    
+    <!-- Light reflection -->
+    <circle cx="65" cy="65" r="4" fill="#ffffff" opacity="0.9"/>
+  </g>
+  
+  <!-- Wordmark -->
+  <text x="190" y="100" 
+        font-family="system-ui, -apple-system, sans-serif" 
+        font-size="64" 
+        font-weight="800" 
+        letter-spacing="0.02em"
+        fill="url(#textGradientBlack)">
+    Oracle
+  </text>
+</svg>
