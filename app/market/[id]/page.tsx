@@ -1,16 +1,20 @@
 "use client"
 
-import { useState, use } from "react"
-import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useRouter, useParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, Clock, TrendingUp, MessageCircle, Check, Loader2 } from "lucide-react"
 import { TopNavigation, BottomNavigation } from "@/components/navigation"
 import { VolumeChart } from "@/components/volume-chart"
 import { markets } from "@/lib/data"
 import { Slider } from "@/components/ui/slider"
+import { Confetti, useFirstBetCelebration } from "@/components/confetti"
+import { ShareButton } from "@/components/share-button"
+import { LiveOdds } from "@/components/live-odds"
 
-export default function MarketDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function MarketDetailPage() {
+  const params = useParams()
+  const id = params.id as string
   const router = useRouter()
   const market = markets.find((m) => m.id === id)
 
@@ -18,6 +22,8 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
   const [betAmount, setBetAmount] = useState(100)
   const [isPlacing, setIsPlacing] = useState(false)
   const [betPlaced, setBetPlaced] = useState(false)
+
+  const { showConfetti, celebrate } = useFirstBetCelebration()
 
   if (!market) {
     return (
@@ -36,6 +42,9 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
     await new Promise((resolve) => setTimeout(resolve, 1500))
     setIsPlacing(false)
     setBetPlaced(true)
+
+    celebrate()
+
     setTimeout(() => setBetPlaced(false), 3000)
   }
 
@@ -50,11 +59,12 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen pb-24 md:pb-8">
+      <Confetti show={showConfetti} />
+
       <TopNavigation />
       <BottomNavigation />
 
       <main className="pt-4 md:pt-24 px-4 max-w-4xl mx-auto">
-        {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -65,7 +75,6 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
           <span>Back to Markets</span>
         </motion.button>
 
-        {/* Market Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,15 +84,17 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
             <span className="px-3 py-1 rounded-lg bg-primary/10 text-primary text-sm font-medium">
               {market.category}
             </span>
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <Clock className="w-4 h-4" />
-              <span>{formatTimeRemaining(market.endTime)}</span>
+            <div className="flex items-center gap-3">
+              <ShareButton question={market.question} yesPrice={market.yesPrice} noPrice={market.noPrice} />
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <Clock className="w-4 h-4" />
+                <span>{formatTimeRemaining(market.endTime)}</span>
+              </div>
             </div>
           </div>
 
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6 text-pretty">{market.question}</h1>
 
-          {/* Yes/No Buttons */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -96,7 +107,9 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
               }`}
             >
               <div className="text-sm text-muted-foreground mb-1">Yes</div>
-              <div className="text-4xl font-bold text-success mb-2">{market.yesPrice.toFixed(2)}</div>
+              <div className="mb-2">
+                <LiveOdds initialPrice={market.yesPrice} type="yes" size="lg" />
+              </div>
               <div className="text-xs text-muted-foreground">
                 +{((1 / market.yesPrice - 1) * 100).toFixed(0)}% potential
               </div>
@@ -122,7 +135,9 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
               }`}
             >
               <div className="text-sm text-muted-foreground mb-1">No</div>
-              <div className="text-4xl font-bold text-destructive mb-2">{market.noPrice.toFixed(2)}</div>
+              <div className="mb-2">
+                <LiveOdds initialPrice={market.noPrice} type="no" size="lg" />
+              </div>
               <div className="text-xs text-muted-foreground">
                 +{((1 / market.noPrice - 1) * 100).toFixed(0)}% potential
               </div>
@@ -138,7 +153,6 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
             </motion.button>
           </div>
 
-          {/* Bet Amount Slider */}
           <AnimatePresence>
             {selectedSide && (
               <motion.div
@@ -209,7 +223,6 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
           </AnimatePresence>
         </motion.div>
 
-        {/* Volume Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -236,7 +249,6 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </motion.div>
 
-        {/* Volume Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -246,7 +258,6 @@ export default function MarketDetailPage({ params }: { params: Promise<{ id: str
           <VolumeChart />
         </motion.div>
 
-        {/* Comments Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

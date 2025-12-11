@@ -139,3 +139,90 @@ export const volumeChartData = [
   { time: "20:00", volume: 5200 },
   { time: "Now", volume: 7100 },
 ]
+
+export const crowdAccuracyData: Record<
+  string,
+  {
+    accuracy: number
+    correct: number
+    total: number
+    examples: { question: string; correct: boolean }[]
+  }
+> = {
+  "1": {
+    accuracy: 72,
+    correct: 7,
+    total: 10,
+    examples: [
+      { question: "BTC closes above $100K last week?", correct: true },
+      { question: "BTC breaks $105K before Dec?", correct: true },
+      { question: "BTC dips below $90K this month?", correct: false },
+    ],
+  },
+  "2": {
+    accuracy: 81,
+    correct: 8,
+    total: 10,
+    examples: [
+      { question: "ETH Shanghai upgrade on time?", correct: true },
+      { question: "ETH staking APY above 4%?", correct: true },
+      { question: "ETH gas below 10 gwei avg?", correct: false },
+    ],
+  },
+  "3": {
+    accuracy: 68,
+    correct: 7,
+    total: 10,
+    examples: [
+      { question: "Canton TVL exceeds $1B?", correct: true },
+      { question: "Canton launches mainnet Q4?", correct: true },
+      { question: "Canton 50K addresses in Nov?", correct: false },
+    ],
+  },
+  "4": {
+    accuracy: 76,
+    correct: 8,
+    total: 10,
+    examples: [
+      { question: "Fed holds rates in Sept?", correct: true },
+      { question: "25bps cut in November?", correct: true },
+      { question: "50bps cut in December?", correct: false },
+    ],
+  },
+  "poll-1": {
+    accuracy: 65,
+    correct: 6,
+    total: 10,
+    examples: [
+      { question: "BTC pumped >5% on Monday?", correct: true },
+      { question: "BTC pumped >5% last Thursday?", correct: false },
+    ],
+  },
+  "poll-2": {
+    accuracy: 85,
+    correct: 9,
+    total: 10,
+    examples: [
+      { question: "Elon tweeted last Tuesday?", correct: true },
+      { question: "Elon tweeted about crypto?", correct: true },
+    ],
+  },
+  "poll-3": {
+    accuracy: 54,
+    correct: 5,
+    total: 10,
+    examples: [
+      { question: "ETH flipped BTC volume Dec 1?", correct: false },
+      { question: "ETH flipped BTC volume Nov 28?", correct: true },
+    ],
+  },
+  "poll-4": {
+    accuracy: 78,
+    correct: 8,
+    total: 10,
+    examples: [
+      { question: "Binance outage last week?", correct: false },
+      { question: "No major outages in Nov?", correct: true },
+    ],
+  },
+}

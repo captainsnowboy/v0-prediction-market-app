@@ -4,6 +4,9 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { Clock, TrendingUp } from "lucide-react"
 import type { Market } from "@/lib/data"
+import { crowdAccuracyData } from "@/lib/data"
+import { CrowdAccuracyBadge } from "./crowd-accuracy-modal"
+import { LiveOdds } from "./live-odds"
 
 interface MarketCardProps {
   market: Market
@@ -30,6 +33,13 @@ function formatVolume(volume: number): string {
 }
 
 export function MarketCard({ market, index = 0 }: MarketCardProps) {
+  const accuracyData = crowdAccuracyData[market.id] || {
+    accuracy: 70,
+    correct: 7,
+    total: 10,
+    examples: [],
+  }
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
       <Link href={`/market/${market.id}`}>
@@ -56,16 +66,24 @@ export function MarketCard({ market, index = 0 }: MarketCardProps) {
                   className="flex-1 bg-success/10 border border-success/30 rounded-xl px-4 py-3 text-center"
                 >
                   <div className="text-xs text-muted-foreground mb-1">Yes</div>
-                  <div className="text-success font-bold text-lg">{market.yesPrice.toFixed(2)}</div>
+                  <LiveOdds initialPrice={market.yesPrice} type="yes" />
                 </motion.div>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   className="flex-1 bg-destructive/10 border border-destructive/30 rounded-xl px-4 py-3 text-center"
                 >
                   <div className="text-xs text-muted-foreground mb-1">No</div>
-                  <div className="text-destructive font-bold text-lg">{market.noPrice.toFixed(2)}</div>
+                  <LiveOdds initialPrice={market.noPrice} type="no" />
                 </motion.div>
               </div>
+            </div>
+
+            <div className="flex items-center justify-center">
+              <CrowdAccuracyBadge
+                accuracy={accuracyData.accuracy}
+                category={market.category}
+                accuracyData={accuracyData}
+              />
             </div>
 
             <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -86,6 +104,13 @@ export function MarketCard({ market, index = 0 }: MarketCardProps) {
 }
 
 export function MarketCardHorizontal({ market, index = 0 }: MarketCardProps) {
+  const accuracyData = crowdAccuracyData[market.id] || {
+    accuracy: 70,
+    correct: 7,
+    total: 10,
+    examples: [],
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -111,12 +136,20 @@ export function MarketCardHorizontal({ market, index = 0 }: MarketCardProps) {
             <div className="flex items-center gap-2">
               <div className="flex-1 bg-success/10 border border-success/20 rounded-lg px-3 py-2 text-center">
                 <div className="text-[10px] text-muted-foreground">Yes</div>
-                <div className="text-success font-bold">{market.yesPrice.toFixed(2)}</div>
+                <LiveOdds initialPrice={market.yesPrice} type="yes" />
               </div>
               <div className="flex-1 bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2 text-center">
                 <div className="text-[10px] text-muted-foreground">No</div>
-                <div className="text-destructive font-bold">{market.noPrice.toFixed(2)}</div>
+                <LiveOdds initialPrice={market.noPrice} type="no" />
               </div>
+            </div>
+
+            <div className="flex justify-center">
+              <CrowdAccuracyBadge
+                accuracy={accuracyData.accuracy}
+                category={market.category}
+                accuracyData={accuracyData}
+              />
             </div>
 
             <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">

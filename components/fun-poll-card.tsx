@@ -4,6 +4,8 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Sparkles } from "lucide-react"
 import type { FunPoll } from "@/lib/data"
+import { crowdAccuracyData } from "@/lib/data"
+import { CrowdAccuracyBadge } from "./crowd-accuracy-modal"
 
 interface FunPollCardProps {
   poll: FunPoll
@@ -16,6 +18,13 @@ export function FunPollCard({ poll, index = 0 }: FunPollCardProps) {
 
   const totalVotes = votes.yes + votes.no
   const yesPercent = totalVotes > 0 ? (votes.yes / totalVotes) * 100 : 50
+
+  const accuracyData = crowdAccuracyData[`poll-${poll.id}`] || {
+    accuracy: 70,
+    correct: 7,
+    total: 10,
+    examples: [],
+  }
 
   const handleVote = (choice: "yes" | "no") => {
     if (voted) return
@@ -62,7 +71,7 @@ export function FunPollCard({ poll, index = 0 }: FunPollCardProps) {
           <div className="flex gap-2">
             <motion.button
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleVote("yes")}
               className="flex-1 py-2 rounded-lg bg-success/10 border border-success/30 text-success text-sm font-medium hover:bg-success/20 transition-colors"
             >
@@ -70,7 +79,7 @@ export function FunPollCard({ poll, index = 0 }: FunPollCardProps) {
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleVote("no")}
               className="flex-1 py-2 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm font-medium hover:bg-destructive/20 transition-colors"
             >
@@ -79,9 +88,12 @@ export function FunPollCard({ poll, index = 0 }: FunPollCardProps) {
           </div>
         )}
 
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <Sparkles className="w-3 h-3 text-warning" />
-          <span>5 CC bet</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Sparkles className="w-3 h-3 text-warning" />
+            <span>5 CC bet</span>
+          </div>
+          <CrowdAccuracyBadge accuracy={accuracyData.accuracy} category="Fun Polls" accuracyData={accuracyData} />
         </div>
       </div>
     </motion.div>
