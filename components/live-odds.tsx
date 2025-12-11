@@ -34,7 +34,12 @@ export function LiveOdds({ initialPrice, type, size = "sm" }: LiveOddsProps) {
   }, [price])
 
   const colorClass = type === "yes" ? "text-success" : "text-destructive"
-  const glowClass = type === "yes" ? "shadow-[0_0_20px_rgba(34,197,94,0.6)]" : "shadow-[0_0_20px_rgba(239,68,68,0.6)]"
+
+  const textShadowGlow = isGlowing
+    ? type === "yes"
+      ? "0 0 8px rgba(34,197,94,0.9), 0 0 16px rgba(34,197,94,0.6), 0 0 24px rgba(34,197,94,0.3)"
+      : "0 0 8px rgba(239,68,68,0.9), 0 0 16px rgba(239,68,68,0.6), 0 0 24px rgba(239,68,68,0.3)"
+    : "none"
 
   return (
     <AnimatePresence mode="wait">
@@ -50,13 +55,10 @@ export function LiveOdds({ initialPrice, type, size = "sm" }: LiveOddsProps) {
           stiffness: 300,
           damping: 20,
         }}
-        className={`${colorClass} font-bold ${size === "lg" ? "text-4xl" : "text-lg"} transition-shadow duration-300 ${isGlowing ? glowClass : ""}`}
+        className={`${colorClass} font-bold ${size === "lg" ? "text-4xl" : "text-lg"}`}
         style={{
-          textShadow: isGlowing
-            ? type === "yes"
-              ? "0 0 10px rgba(34,197,94,0.8)"
-              : "0 0 10px rgba(239,68,68,0.8)"
-            : "none",
+          textShadow: textShadowGlow,
+          transition: "text-shadow 0.3s ease",
         }}
       >
         {price.toFixed(2)}

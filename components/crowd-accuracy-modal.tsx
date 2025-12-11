@@ -34,25 +34,27 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md z-50"
+            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[90%] md:max-w-md z-50 overflow-hidden"
           >
-            <div className="glass-card rounded-2xl p-5 border border-white/10">
+            <div className="glass-card rounded-2xl p-4 md:p-5 border border-white/10 h-full md:h-auto overflow-y-auto">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold text-foreground">Crowd Accuracy</h3>
+                  <TrendingUp className="w-5 h-5 text-primary flex-shrink-0" />
+                  <h3 className="text-base md:text-lg font-semibold text-foreground">Crowd Accuracy</h3>
                 </div>
-                <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+                <button
+                  onClick={onClose}
+                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0"
+                >
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
 
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-4 break-words">
                 Last 10 {category} markets: {data.correct} right, {data.total - data.correct} wrong
               </p>
 
-              {/* Bar Chart */}
-              <div className="flex items-end gap-1.5 h-32 mb-4 px-2">
+              <div className="flex items-end gap-1 md:gap-1.5 h-24 md:h-32 mb-4 w-full">
                 {Array.from({ length: 10 }).map((_, i) => {
                   const isCorrect = i < data.correct
                   return (
@@ -61,7 +63,7 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
                       initial={{ height: 0 }}
                       animate={{ height: isCorrect ? "100%" : "40%" }}
                       transition={{ delay: i * 0.05, duration: 0.3 }}
-                      className={`flex-1 rounded-t-md ${
+                      className={`flex-1 rounded-t-md min-w-0 ${
                         isCorrect
                           ? "bg-gradient-to-t from-success/60 to-success"
                           : "bg-gradient-to-t from-destructive/40 to-destructive/60"
@@ -73,28 +75,29 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
 
               <div className="flex justify-center gap-4 text-xs text-muted-foreground mb-5">
                 <span className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded-sm bg-success" />
+                  <div className="w-3 h-3 rounded-sm bg-success flex-shrink-0" />
                   Correct
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded-sm bg-destructive/60" />
+                  <div className="w-3 h-3 rounded-sm bg-destructive/60 flex-shrink-0" />
                   Incorrect
                 </span>
               </div>
 
-              {/* Examples */}
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recent Examples</p>
                 {data.examples.map((example, i) => (
                   <div key={i} className="flex items-start gap-2 p-2.5 rounded-lg bg-white/5">
-                    <div className={`p-1 rounded-full ${example.correct ? "bg-success/20" : "bg-destructive/20"}`}>
+                    <div
+                      className={`p-1 rounded-full flex-shrink-0 ${example.correct ? "bg-success/20" : "bg-destructive/20"}`}
+                    >
                       {example.correct ? (
                         <Check className="w-3 h-3 text-success" />
                       ) : (
                         <XIcon className="w-3 h-3 text-destructive" />
                       )}
                     </div>
-                    <p className="text-sm text-foreground/80 leading-tight">{example.question}</p>
+                    <p className="text-sm text-foreground/80 leading-tight break-words min-w-0">{example.question}</p>
                   </div>
                 ))}
               </div>
