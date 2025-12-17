@@ -59,13 +59,15 @@ export function Hero() {
               <ArrowRight className="w-4 h-4" />
             </motion.button>
           </Link>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-secondary text-secondary-foreground font-semibold border border-border hover:bg-secondary/80 transition-colors"
-          >
-            Learn More
-          </motion.button>
+          <Link href="/guide">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-secondary text-secondary-foreground font-semibold border border-border hover:bg-secondary/80 transition-colors"
+            >
+              Learn More
+            </motion.button>
+          </Link>
         </motion.div>
 
         <motion.div

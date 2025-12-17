@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronRight, ChevronLeft, Wallet, TrendingUp, CheckCircle, Sparkles } from "lucide-react"
+import {
+  X,
+  ChevronRight,
+  ChevronLeft,
+  Wallet,
+  TrendingUp,
+  CheckCircle,
+  Sparkles,
+  Eye,
+  MousePointer,
+  DollarSign,
+} from "lucide-react"
+import Link from "next/link"
 
 export function OnboardingCarousel() {
   const [isOpen, setIsOpen] = useState(false)
@@ -13,7 +25,6 @@ export function OnboardingCarousel() {
     const walletConnected = localStorage.getItem("oracle_wallet_connected") === "true"
     setIsWalletConnected(walletConnected)
 
-    // Show modal only if wallet is NOT connected
     if (!walletConnected) {
       setIsOpen(true)
     }
@@ -40,9 +51,7 @@ export function OnboardingCarousel() {
     localStorage.setItem("oracle_wallet_balance", "200")
     localStorage.setItem("oracle_bet_count", "0")
     handleClose()
-    // Trigger storage event for other components
     window.dispatchEvent(new Event("storage"))
-    // Redirect to profile
     window.location.href = "/profile"
   }
 
@@ -56,30 +65,30 @@ export function OnboardingCarousel() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-[10px] z-[100]"
+            className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-[10px]"
             onClick={handleClose}
           />
 
-          {/* Modal */}
-          <div className="fixed inset-0 z-[101] flex items-center justify-center p-4 md:p-8">
+          <div className="fixed inset-0 z-[101] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-[90%] md:w-[60%] h-[80%] md:h-[70%] glass-card rounded-3xl p-6 md:p-8 glow-primary flex flex-col"
+              className="relative w-[70%] h-[80%] md:w-[60%] md:h-[70%] glass-card rounded-[24px] p-6 md:p-8 glow-primary flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close button */}
+              {/* Close button top-right */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-secondary/50 hover:bg-secondary flex items-center justify-center transition-colors z-10"
+                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-secondary/50 hover:bg-secondary flex items-center justify-center transition-colors z-10"
               >
-                <X className="w-4 h-4 text-muted-foreground" />
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
 
-              {/* Slides */}
+              {/* Slides with smooth fade transitions */}
               <div className="flex-1 flex flex-col overflow-auto">
                 <AnimatePresence mode="wait">
+                  {/* Slide 1: Welcome */}
                   {currentSlide === 0 && (
                     <motion.div
                       key="slide-0"
@@ -90,12 +99,12 @@ export function OnboardingCarousel() {
                       className="flex-1 flex flex-col items-center justify-center text-center px-4"
                     >
                       <svg
-                        width="80"
-                        height="80"
+                        width="100"
+                        height="100"
                         viewBox="0 0 120 120"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        className="mb-6"
+                        className="mb-8"
                       >
                         <defs>
                           <linearGradient id="welcomeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -131,14 +140,16 @@ export function OnboardingCarousel() {
                         <circle cx="60" cy="60" r="10" fill="url(#welcomeGradient)" />
                         <circle cx="63" cy="57" r="3" fill="white" opacity="0.9" />
                       </svg>
-                      <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-4">Welcome to Oracle</h1>
-                      <p className="text-base md:text-lg text-muted-foreground max-w-lg leading-relaxed">
-                        The privacy-first prediction market on Canton Network. Bet on what you believe, win real CC, all
-                        with complete privacy.
+                      <h1 className="text-3xl md:text-5xl font-bold gradient-text mb-6 text-balance">
+                        Welcome to Oracle
+                      </h1>
+                      <p className="text-base md:text-xl text-foreground/90 max-w-lg leading-relaxed text-balance">
+                        The privacy-first prediction market on Canton Network. Bet on what you believe, win real CC.
                       </p>
                     </motion.div>
                   )}
 
+                  {/* Slide 2: How to Place a Bet */}
                   {currentSlide === 1 && (
                     <motion.div
                       key="slide-1"
@@ -146,32 +157,38 @@ export function OnboardingCarousel() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="flex-1 px-4"
+                      className="flex-1 px-4 py-6 overflow-y-auto"
                     >
-                      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8">How to Place a Bet</h2>
-                      <div className="grid md:grid-cols-2 gap-8">
-                        <div className="space-y-6">
+                      <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-8 text-balance">
+                        How to Place a Bet
+                      </h2>
+                      <div className="grid md:grid-cols-2 gap-6 md:gap-10">
+                        <div className="space-y-5">
                           {[
-                            { num: 1, text: "Connect wallet" },
-                            { num: 2, text: "Browse markets" },
-                            { num: 3, text: "Choose Yes/No + amount" },
-                            { num: 4, text: "Confirm & wait for resolution" },
+                            { num: 1, text: "Connect wallet", icon: Wallet },
+                            { num: 2, text: "Browse markets", icon: Eye },
+                            { num: 3, text: "Choose Yes/No + amount", icon: MousePointer },
+                            { num: 4, text: "Confirm & wait for resolution", icon: DollarSign },
                           ].map((step) => (
                             <div key={step.num} className="flex items-start gap-4">
-                              <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0">
-                                <span className="text-sm font-bold text-primary">{step.num}</span>
+                              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0">
+                                <span className="text-base md:text-lg font-bold text-primary">{step.num}</span>
                               </div>
-                              <p className="text-foreground font-medium pt-1">{step.text}</p>
+                              <div className="flex-1 pt-2">
+                                <p className="text-base md:text-lg text-foreground font-medium text-balance">
+                                  {step.text}
+                                </p>
+                              </div>
                             </div>
                           ))}
                         </div>
                         <div className="hidden md:flex items-center justify-center">
                           <div className="relative">
-                            <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30 flex items-center justify-center">
-                              <TrendingUp className="w-16 h-16 text-primary" />
+                            <div className="w-40 h-40 rounded-3xl bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30 flex items-center justify-center">
+                              <TrendingUp className="w-20 h-20 text-primary" />
                             </div>
-                            <div className="absolute -top-2 -right-2 w-12 h-12 rounded-full bg-success/20 border-2 border-success flex items-center justify-center">
-                              <CheckCircle className="w-6 h-6 text-success" />
+                            <div className="absolute -top-3 -right-3 w-16 h-16 rounded-full bg-success/20 border-2 border-success flex items-center justify-center animate-bounce">
+                              <CheckCircle className="w-8 h-8 text-success" />
                             </div>
                           </div>
                         </div>
@@ -179,6 +196,7 @@ export function OnboardingCarousel() {
                     </motion.div>
                   )}
 
+                  {/* Slide 3: Connect Wallet */}
                   {currentSlide === 2 && (
                     <motion.div
                       key="slide-2"
@@ -188,13 +206,13 @@ export function OnboardingCarousel() {
                       transition={{ duration: 0.3 }}
                       className="flex-1 flex flex-col items-center justify-center text-center px-4"
                     >
-                      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-                        <Wallet className="w-10 h-10 text-primary" />
+                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                        <Wallet className="w-10 h-10 md:w-12 md:h-12 text-primary" />
                       </div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                      <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4 text-balance">
                         Connect your wallet to create a profile and start predicting
                       </h2>
-                      <p className="text-muted-foreground mb-8 max-w-md">
+                      <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-md text-balance">
                         Your wallet is your account – no email needed
                       </p>
                       <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
@@ -202,22 +220,24 @@ export function OnboardingCarousel() {
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={handleConnectWallet}
-                          className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold"
+                          className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold text-base"
                         >
                           Connect Wallet
                         </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => (window.location.href = "/guide")}
-                          className="flex-1 py-3 px-6 rounded-xl bg-secondary border border-border text-foreground font-semibold"
-                        >
-                          Learn More
-                        </motion.button>
+                        <Link href="/guide" className="flex-1" onClick={handleClose}>
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="w-full py-3 px-6 rounded-xl bg-secondary border border-border text-foreground font-semibold text-base"
+                          >
+                            Learn More
+                          </motion.button>
+                        </Link>
                       </div>
                     </motion.div>
                   )}
 
+                  {/* Slide 4: Earn Rewards */}
                   {currentSlide === 3 && (
                     <motion.div
                       key="slide-3"
@@ -227,29 +247,29 @@ export function OnboardingCarousel() {
                       transition={{ duration: 0.3 }}
                       className="flex-1 flex flex-col items-center justify-center text-center px-4"
                     >
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500/20 to-primary/20 flex items-center justify-center mb-6">
-                        <Sparkles className="w-10 h-10 text-primary" />
+                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-orange-500/20 to-primary/20 flex items-center justify-center mb-6">
+                        <Sparkles className="w-10 h-10 md:w-12 md:h-12 text-primary" />
                       </div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Earn Rewards</h2>
-                      <p className="text-muted-foreground mb-6 max-w-md">
+                      <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4 text-balance">Earn Rewards</h2>
+                      <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-md text-balance">
                         Build daily streaks, complete tasks, and climb the leaderboard
                       </p>
                       <div className="grid grid-cols-3 gap-4 w-full max-w-md mb-6">
                         <div className="glass-card rounded-xl p-4">
-                          <div className="text-2xl mb-1">🔥</div>
-                          <div className="text-sm text-muted-foreground">Streak</div>
+                          <div className="text-3xl md:text-4xl mb-2">🔥</div>
+                          <div className="text-sm md:text-base text-muted-foreground">Streak</div>
                         </div>
                         <div className="glass-card rounded-xl p-4">
-                          <div className="text-2xl mb-1">✅</div>
-                          <div className="text-sm text-muted-foreground">Tasks</div>
+                          <div className="text-3xl md:text-4xl mb-2">✅</div>
+                          <div className="text-sm md:text-base text-muted-foreground">Tasks</div>
                         </div>
                         <div className="glass-card rounded-xl p-4">
-                          <div className="text-2xl mb-1">🏆</div>
-                          <div className="text-sm text-muted-foreground">Leaderboard</div>
+                          <div className="text-3xl md:text-4xl mb-2">🏆</div>
+                          <div className="text-sm md:text-base text-muted-foreground">Leaderboard</div>
                         </div>
                       </div>
-                      <div className="px-4 py-2 rounded-full bg-warning/10 border border-warning/30">
-                        <span className="text-sm font-medium text-warning">Coming soon after beta</span>
+                      <div className="px-5 py-2.5 rounded-full bg-warning/10 border border-warning/30">
+                        <span className="text-sm md:text-base font-medium text-warning">Coming soon after beta</span>
                       </div>
                     </motion.div>
                   )}
