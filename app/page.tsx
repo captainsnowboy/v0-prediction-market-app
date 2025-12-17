@@ -6,11 +6,14 @@ import { TopNavigation, BottomNavigation } from "@/components/navigation"
 import { Hero } from "@/components/hero"
 import { MarketCard, MarketCardHorizontal } from "@/components/market-card"
 import { FunPollCard } from "@/components/fun-poll-card"
+import { OnboardingCarousel } from "@/components/onboarding-carousel"
 import { markets, funPolls } from "@/lib/data"
 
 export default function HomePage() {
   return (
     <div className="min-h-screen pb-24 md:pb-8">
+      <OnboardingCarousel />
+
       <TopNavigation />
       <BottomNavigation />
 

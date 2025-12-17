@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { Home, BarChart3, Trophy, User, Wallet } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react"
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
@@ -15,6 +16,26 @@ const navItems = [
 
 export function TopNavigation() {
   const pathname = usePathname()
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+
+  useEffect(() => {
+    const checkWallet = () => {
+      const connected = localStorage.getItem("oracle_wallet_connected") === "true"
+      setIsWalletConnected(connected)
+    }
+
+    checkWallet()
+
+    window.addEventListener("storage", checkWallet)
+    return () => window.removeEventListener("storage", checkWallet)
+  }, [])
+
+  const filteredNavItems = navItems.filter((item) => {
+    if (item.href === "/profile" && !isWalletConnected) {
+      return false
+    }
+    return true
+  })
 
   return (
     <motion.header
@@ -57,7 +78,7 @@ export function TopNavigation() {
             </Link>
 
             <nav className="flex items-center gap-1">
-              {navItems.map((item) => {
+              {filteredNavItems.map((item) => {
                 const isActive = pathname === item.href || (item.href === "/markets" && pathname.startsWith("/market/"))
                 return (
                   <Link
@@ -81,16 +102,34 @@ export function TopNavigation() {
               })}
             </nav>
 
-            <Link href="/profile">
+            {isWalletConnected ? (
+              <Link href="/profile">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
+                >
+                  <Wallet className="w-4 h-4" />
+                  <span className="hidden sm:inline">200 CC</span>
+                </motion.button>
+              </Link>
+            ) : (
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  localStorage.setItem("oracle_wallet_connected", "true")
+                  localStorage.setItem("oracle_wallet_balance", "200")
+                  localStorage.setItem("oracle_bet_count", "0")
+                  window.dispatchEvent(new Event("storage"))
+                  window.location.href = "/profile"
+                }}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
               >
                 <Wallet className="w-4 h-4" />
                 Connect Wallet
               </motion.button>
-            </Link>
+            )}
           </div>
         </div>
       </div>
@@ -100,6 +139,26 @@ export function TopNavigation() {
 
 export function BottomNavigation() {
   const pathname = usePathname()
+  const [isWalletConnected, setIsWalletConnected] = useState(false)
+
+  useEffect(() => {
+    const checkWallet = () => {
+      const connected = localStorage.getItem("oracle_wallet_connected") === "true"
+      setIsWalletConnected(connected)
+    }
+
+    checkWallet()
+
+    window.addEventListener("storage", checkWallet)
+    return () => window.removeEventListener("storage", checkWallet)
+  }, [])
+
+  const filteredNavItems = navItems.filter((item) => {
+    if (item.href === "/profile" && !isWalletConnected) {
+      return false
+    }
+    return true
+  })
 
   return (
     <motion.nav
@@ -112,7 +171,7 @@ export function BottomNavigation() {
         style={{ paddingBottom: "max(env(safe-area-inset-bottom, 8px), 8px)" }}
       >
         <div className="flex items-center justify-around">
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href || (item.href === "/markets" && pathname.startsWith("/market/"))
             return (
