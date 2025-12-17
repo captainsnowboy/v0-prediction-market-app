@@ -38,11 +38,10 @@ export function TopNavigation() {
   })
 
   const handleConnectWallet = () => {
-    // Just set wallet state and trigger onboarding modal by reloading
-    localStorage.setItem("oracle_wallet_connected", "true")
-    localStorage.setItem("oracle_wallet_balance", "200")
-    localStorage.setItem("oracle_bet_count", "0")
+    // Clear the wallet state to trigger onboarding modal
+    localStorage.removeItem("oracle_wallet_connected")
     window.dispatchEvent(new Event("storage"))
+    // Reload to show onboarding carousel
     window.location.reload()
   }
 
