@@ -37,6 +37,15 @@ export function TopNavigation() {
     return true
   })
 
+  const handleConnectWallet = () => {
+    // Just set wallet state and trigger onboarding modal by reloading
+    localStorage.setItem("oracle_wallet_connected", "true")
+    localStorage.setItem("oracle_wallet_balance", "200")
+    localStorage.setItem("oracle_bet_count", "0")
+    window.dispatchEvent(new Event("storage"))
+    window.location.reload()
+  }
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -117,13 +126,7 @@ export function TopNavigation() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  localStorage.setItem("oracle_wallet_connected", "true")
-                  localStorage.setItem("oracle_wallet_balance", "200")
-                  localStorage.setItem("oracle_bet_count", "0")
-                  window.dispatchEvent(new Event("storage"))
-                  window.location.href = "/profile"
-                }}
+                onClick={handleConnectWallet}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
               >
                 <Wallet className="w-4 h-4" />
