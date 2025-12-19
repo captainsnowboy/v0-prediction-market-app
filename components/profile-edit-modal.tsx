@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, User, Upload, Sparkles } from "lucide-react"
 
@@ -10,33 +10,74 @@ interface ProfileEditModalProps {
   onSave: (displayName: string, pfpUrl: string) => void
 }
 
+function generatePortraitPFP(walletAddress: string, displayName: string): string {
+  // Hash wallet address to generate unique but deterministic values
+  let hash = 0
+  for (let i = 0; i < walletAddress.length; i++) {
+    hash = walletAddress.charCodeAt(i) + ((hash << 5) - hash)
+  }
+
+  // Generate diverse skin tones and backgrounds
+  const skinTones = ["FFDBAC", "F1C27D", "E0AC69", "C68642", "8D5524", "654321"]
+  const backgrounds = ["0052FF", "3B82F6", "6366F1", "8B5CF6", "A855F7", "EC4899"]
+  const hairColors = ["2C1810", "3D2817", "6A4E42", "8B7355", "D2B48C", "FFD700"]
+
+  const skinIndex = Math.abs(hash) % skinTones.length
+  const bgIndex = Math.abs(hash >> 8) % backgrounds.length
+  const hairIndex = Math.abs(hash >> 16) % hairColors.length
+
+  const skinTone = skinTones[skinIndex]
+  const bgColor = backgrounds[bgIndex]
+
+  // Use DiceBear API for high-quality avatar generation with Canton blue accents
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${walletAddress}&backgroundColor=${bgColor}&radius=50&size=200`
+}
+
 export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalProps) {
   const [displayName, setDisplayName] = useState("")
   const [pfpUrl, setPfpUrl] = useState("")
   const [generating, setGenerating] = useState(false)
 
+  useEffect(() => {
+    if (isOpen) {
+      const savedName = localStorage.getItem("oracle_display_name") || ""
+      const savedPfp = localStorage.getItem("oracle_pfp_url") || ""
+      if (savedName) setDisplayName(savedName)
+      if (savedPfp) setPfpUrl(savedPfp)
+    }
+  }, [isOpen])
+
   const generatePFP = () => {
     setGenerating(true)
     const walletAddress = localStorage.getItem("oracle_wallet_address") || ""
-    // Generate avatar based on wallet address
-    const colors = ["FF6B6B", "4ECDC4", "45B7D1", "96CEB4", "FFEAA7", "DFE6E9", "A29BFE", "FD79A8"]
-    const colorIndex = Number.parseInt(walletAddress.slice(4, 6), 16) % colors.length
-    const avatarUrl = `https://ui-avatars.com/api/?name=${displayName || "User"}&background=${colors[colorIndex]}&color=fff&size=200&bold=true`
+
+    const portraitUrl = generatePortraitPFP(walletAddress, displayName || "User")
+
     setTimeout(() => {
-      setPfpUrl(avatarUrl)
+      setPfpUrl(portraitUrl)
       setGenerating(false)
     }, 800)
   }
 
   const handleSave = () => {
     if (!displayName.trim()) return
-    if (!pfpUrl) {
-      generatePFP()
-    }
-    onSave(
-      displayName,
-      pfpUrl || `https://ui-avatars.com/api/?name=${displayName}&background=0052FF&color=fff&size=200&bold=true`,
-    )
+
+    // Generate PFP if not already set
+    const walletAddress = localStorage.getItem("oracle_wallet_address") || ""
+    const finalPfpUrl = pfpUrl || generatePortraitPFP(walletAddress, displayName)
+
+    // Save to localStorage
+    localStorage.setItem("oracle_display_name", displayName)
+    localStorage.setItem("oracle_pfp_url", finalPfpUrl)
+    localStorage.setItem("oracle_profile_complete", "true")
+
+    // Trigger storage event to update UI
+    window.dispatchEvent(new Event("storage"))
+
+    // Call onSave callback
+    onSave(displayName, finalPfpUrl)
+
+    // Close modal
     onClose()
   }
 
@@ -137,7 +178,7 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
                 disabled={!displayName.trim()}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save Profile
+                Finish Editing
               </motion.button>
 
               <button

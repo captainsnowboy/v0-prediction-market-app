@@ -34,13 +34,13 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-4 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[90%] md:max-w-md md:max-h-[85vh] md:overflow-y-auto z-50 overflow-hidden"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md max-h-[85vh] overflow-y-auto z-50"
           >
-            <div className="glass-card rounded-2xl p-4 md:p-5 border border-white/10 h-full md:h-auto md:overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
+            <div className="glass-card rounded-2xl p-5 border border-white/10">
+              <div className="flex items-center justify-between mb-4 sticky top-0 bg-[#0f0f12]/95 backdrop-blur-sm z-10 -mt-5 -mx-5 px-5 py-4 rounded-t-2xl">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-primary flex-shrink-0" />
-                  <h3 className="text-base md:text-lg font-semibold text-foreground">Crowd Accuracy</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Crowd Accuracy</h3>
                 </div>
                 <button
                   onClick={onClose}
@@ -54,7 +54,7 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
                 Last 10 {category} markets: {data.correct} right, {data.total - data.correct} wrong
               </p>
 
-              <div className="flex items-end gap-1 md:gap-1.5 h-24 md:h-32 mb-4 w-full">
+              <div className="flex items-end gap-1.5 h-32 mb-4 w-full">
                 {Array.from({ length: 10 }).map((_, i) => {
                   const isCorrect = i < data.correct
                   return (
@@ -84,7 +84,7 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
                 </span>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 pb-2">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recent Examples</p>
                 {data.examples.map((example, i) => (
                   <div key={i} className="flex items-start gap-2 p-2.5 rounded-lg bg-white/5">

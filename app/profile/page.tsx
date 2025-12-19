@@ -21,8 +21,10 @@ import {
   Sparkles,
   ChevronDown,
   LogOut,
+  Edit,
 } from "lucide-react"
 import { TopNavigation, BottomNavigation } from "@/components/navigation"
+import { ProfileEditModal } from "@/components/profile-edit-modal"
 
 type Tab = "overview" | "rewards" | "settings"
 
@@ -56,6 +58,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState("")
   const [pfpUrl, setPfpUrl] = useState("")
   const [email, setEmail] = useState("")
+  const [showProfileEditModal, setShowProfileEditModal] = useState(false)
   const betsToUnlock = 5
   const referralCode = "ORACLE-7X92K"
   const currentStreak = 4
@@ -139,6 +142,13 @@ export default function ProfilePage() {
     URL.revokeObjectURL(url)
   }
 
+  const handleProfileSave = (name: string, pfp: string) => {
+    setDisplayName(name)
+    setPfpUrl(pfp)
+    setHasProfile(true)
+    setShowProfileEditModal(false)
+  }
+
   const completedTasks = tasks.filter((t) => t.completed).length
   const totalTaskReward = tasks.reduce((acc, t) => acc + t.reward, 0)
   const earnedTaskReward = tasks.filter((t) => t.completed).reduce((acc, t) => acc + t.reward, 0)
@@ -175,6 +185,12 @@ export default function ProfilePage() {
       <TopNavigation />
       <BottomNavigation />
 
+      <ProfileEditModal
+        isOpen={showProfileEditModal}
+        onClose={() => setShowProfileEditModal(false)}
+        onSave={handleProfileSave}
+      />
+
       <div className="max-w-2xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2 text-balance">Your Profile</h1>
@@ -197,10 +213,10 @@ export default function ProfilePage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => window.location.reload()}
+              onClick={() => setShowProfileEditModal(true)}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
             >
-              Edit Profile to Unlock
+              Edit Profile
             </motion.button>
           </motion.div>
         )}
@@ -211,35 +227,41 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             className="glass-card rounded-2xl p-6 mb-6 relative"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {hasProfile && pfpUrl && (
-                  <img
-                    src={pfpUrl || "/placeholder.svg"}
-                    alt={displayName}
-                    className="w-12 h-12 rounded-full border-2 border-primary/30"
-                  />
-                )}
-                <div>
-                  {hasProfile && displayName && (
-                    <p className="text-sm font-semibold text-foreground mb-1">{displayName}</p>
-                  )}
-                  <button
-                    onClick={() => setShowDropdown(!showDropdown)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
-                  >
-                    <Wallet className="w-4 h-4" />
-                    <span className="font-mono">
-                      {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                    </span>
-                    <span className="text-success">Connected</span>
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
+            <div className="flex flex-col items-center mb-6">
+              {hasProfile && pfpUrl && (
+                <img
+                  src={pfpUrl || "/placeholder.svg"}
+                  alt={displayName}
+                  className="w-24 h-24 rounded-full border-4 border-primary/30 mb-4"
+                />
+              )}
+              {hasProfile && displayName && <h2 className="text-2xl font-bold text-foreground mb-2">{displayName}</h2>}
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
+              >
+                <Wallet className="w-4 h-4" />
+                <span className="font-mono">
+                  {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                </span>
+                <span className="text-success">Connected</span>
+                <ChevronDown className="w-3 h-3" />
+              </button>
             </div>
             {showDropdown && (
               <div className="absolute top-full mt-2 right-6 w-48 glass-card rounded-xl border border-border/50 p-2 shadow-xl z-10">
+                {hasProfile && (
+                  <button
+                    onClick={() => {
+                      setShowProfileEditModal(true)
+                      setShowDropdown(false)
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-foreground hover:bg-white/10 transition-colors mb-1"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit Profile
+                  </button>
+                )}
                 <button
                   onClick={handleDisconnect}
                   className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"

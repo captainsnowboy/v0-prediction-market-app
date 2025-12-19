@@ -4,11 +4,13 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Wallet } from "lucide-react"
 import { WalletConnectModal } from "./wallet-connect-modal"
+import { ProfileEditModal } from "./profile-edit-modal"
 
 export function MobileWalletButton() {
   const [isWalletConnected, setIsWalletConnected] = useState(false)
   const [balance, setBalance] = useState(0)
   const [showWalletModal, setShowWalletModal] = useState(false)
+  const [showProfileEditModal, setShowProfileEditModal] = useState(false)
 
   useEffect(() => {
     const checkWallet = () => {
@@ -37,6 +39,21 @@ export function MobileWalletButton() {
     setIsWalletConnected(true)
     setBalance(200)
     window.dispatchEvent(new Event("storage"))
+
+    // Show profile edit modal after successful connection on mobile
+    setTimeout(() => {
+      const hasProfile = localStorage.getItem("oracle_profile_complete") === "true"
+      if (!hasProfile) {
+        setShowProfileEditModal(true)
+      }
+    }, 500)
+  }
+
+  const handleProfileSave = (displayName: string, pfpUrl: string) => {
+    localStorage.setItem("oracle_profile_complete", "true")
+    localStorage.setItem("oracle_display_name", displayName)
+    localStorage.setItem("oracle_pfp_url", pfpUrl)
+    window.dispatchEvent(new Event("storage"))
   }
 
   return (
@@ -57,6 +74,12 @@ export function MobileWalletButton() {
         isOpen={showWalletModal}
         onClose={() => setShowWalletModal(false)}
         onConnect={handleWalletConnect}
+      />
+
+      <ProfileEditModal
+        isOpen={showProfileEditModal}
+        onClose={() => setShowProfileEditModal(false)}
+        onSave={handleProfileSave}
       />
     </>
   )
