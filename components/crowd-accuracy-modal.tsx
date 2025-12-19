@@ -34,7 +34,7 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md max-h-[85vh] overflow-y-auto z-50"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md max-h-[90vh] overflow-y-auto z-50"
           >
             <div className="glass-card rounded-2xl p-5 border border-white/10">
               <div className="flex items-center justify-between mb-4 sticky top-0 bg-[#0f0f12]/95 backdrop-blur-sm z-10 -mt-5 -mx-5 px-5 py-4 rounded-t-2xl">
@@ -54,7 +54,7 @@ export function CrowdAccuracyModal({ isOpen, onClose, data, category }: CrowdAcc
                 Last 10 {category} markets: {data.correct} right, {data.total - data.correct} wrong
               </p>
 
-              <div className="flex items-end gap-1.5 h-32 mb-4 w-full">
+              <div className="flex items-end gap-1.5 h-40 mb-4 w-full">
                 {Array.from({ length: 10 }).map((_, i) => {
                   const isCorrect = i < data.correct
                   return (
