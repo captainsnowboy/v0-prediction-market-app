@@ -48,6 +48,7 @@ export function OnboardingCarousel() {
     localStorage.setItem("oracle_wallet_address", fakeAddress)
     localStorage.setItem("oracle_wallet_balance", "200")
     localStorage.setItem("oracle_bet_count", "0")
+    localStorage.setItem("oracle_show_profile_edit", "true")
     window.dispatchEvent(new Event("storage"))
     window.location.href = "/profile"
   }

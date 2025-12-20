@@ -104,6 +104,18 @@ export default function ProfilePage() {
     return () => window.removeEventListener("storage", handleStorageChange)
   }, [])
 
+  useEffect(() => {
+    const shouldShowEdit = localStorage.getItem("oracle_show_profile_edit")
+    const profileComplete = localStorage.getItem("oracle_profile_complete") === "true"
+
+    if (shouldShowEdit === "true" && !profileComplete) {
+      // Clear the flag
+      localStorage.removeItem("oracle_show_profile_edit")
+      // Show the profile edit modal
+      setShowProfileEditModal(true)
+    }
+  }, [])
+
   const handleDisconnect = () => {
     localStorage.removeItem("oracle_wallet_connected")
     localStorage.removeItem("oracle_wallet_address")
@@ -520,59 +532,6 @@ export default function ProfilePage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 }}
-                  className="glass-card rounded-2xl p-5 md:p-6"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-foreground">Balance</h2>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-warning/10 border border-warning/30">
-                      <Lock className="w-3 h-3 text-warning" />
-                      <span className="text-xs text-warning font-medium">
-                        {totalBets}/{betsToUnlock} bets to unlock
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-baseline gap-2 mb-6">
-                    <span className="text-4xl font-bold gradient-text">200</span>
-                    <span className="text-xl text-muted-foreground">CC</span>
-                    <span className="text-sm text-muted-foreground ml-2">available</span>
-                  </div>
-
-                  <div className="mb-4 p-3 rounded-xl bg-secondary/50 border border-border flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center">
-                      <Lock className="w-5 h-5 text-warning" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">Bonuses Locked</p>
-                      <p className="text-xs text-muted-foreground">
-                        Place {betsToUnlock - totalBets} more bet{betsToUnlock - totalBets !== 1 ? "s" : ""} to unlock
-                        withdrawals
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="py-3 md:py-3 h-12 md:h-auto rounded-xl bg-primary text-primary-foreground font-medium transition-all duration-300"
-                    >
-                      Deposit
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="py-3 md:py-3 h-12 md:h-auto rounded-xl bg-secondary text-secondary-foreground font-medium border border-border transition-all duration-300"
-                    >
-                      Withdraw
-                    </motion.button>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
                   className="glass-card rounded-2xl p-5 md:p-6"
                 >
                   <div className="flex items-center justify-between mb-4">
