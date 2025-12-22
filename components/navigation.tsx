@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { WalletConnectModal } from "./wallet-connect-modal"
 import { ProfileEditModal } from "./profile-edit-modal"
+import { ThemeToggle } from "./theme-toggle"
 
 const navItems = [
   { href: "/", label: "Home", icon: Home },
@@ -160,47 +161,50 @@ export function TopNavigation() {
                 })}
               </nav>
 
-              {isWalletConnected ? (
-                <div className="relative">
+              <div className="flex items-center gap-3">
+                <ThemeToggle />
+                {isWalletConnected ? (
+                  <div className="relative">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setShowDropdown(!showDropdown)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
+                    >
+                      <Wallet className="w-4 h-4" />
+                      <span>{balance} CC</span>
+                      <ChevronDown className="w-3 h-3" />
+                    </motion.button>
+                    {showDropdown && (
+                      <div className="absolute right-0 mt-2 w-64 glass-card rounded-xl border border-border/50 p-2 shadow-xl">
+                        <div className="px-3 py-2 mb-2 border-b border-border/50">
+                          <p className="text-xs text-muted-foreground mb-1">Connected</p>
+                          <p className="text-sm font-medium text-foreground font-mono">
+                            {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                          </p>
+                        </div>
+                        <button
+                          onClick={handleDisconnect}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Disconnect Wallet
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setShowDropdown(!showDropdown)}
+                    onClick={handleConnectWallet}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
                   >
                     <Wallet className="w-4 h-4" />
-                    <span>{balance} CC</span>
-                    <ChevronDown className="w-3 h-3" />
+                    Connect Wallet
                   </motion.button>
-                  {showDropdown && (
-                    <div className="absolute right-0 mt-2 w-64 glass-card rounded-xl border border-border/50 p-2 shadow-xl">
-                      <div className="px-3 py-2 mb-2 border-b border-border/50">
-                        <p className="text-xs text-muted-foreground mb-1">Connected</p>
-                        <p className="text-sm font-medium text-foreground font-mono">
-                          {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                        </p>
-                      </div>
-                      <button
-                        onClick={handleDisconnect}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Disconnect Wallet
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleConnectWallet}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
-                >
-                  <Wallet className="w-4 h-4" />
-                  Connect Wallet
-                </motion.button>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
