@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Wallet, ChevronDown, LogOut } from "lucide-react"
 import { WalletConnectModal } from "./wallet-connect-modal"
 import { ProfileEditModal } from "./profile-edit-modal"
+import { ThemeToggle } from "./theme-toggle"
 
 export function MobileWalletButton() {
   const [isWalletConnected, setIsWalletConnected] = useState(false)
@@ -86,7 +87,8 @@ export function MobileWalletButton() {
 
   return (
     <>
-      <div className="md:hidden fixed top-4 right-4 z-40">
+      <div className="md:hidden fixed top-4 right-4 z-40 flex items-center gap-2">
+        <ThemeToggle />
         <motion.button
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
