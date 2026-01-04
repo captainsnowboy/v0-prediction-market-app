@@ -3,14 +3,16 @@
 import { useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, Clock, TrendingUp, MessageCircle, Check, Loader2 } from "lucide-react"
+import { ArrowLeft, Clock, MessageCircle, Check, Loader2, Copy, Heart } from "lucide-react"
 import { TopNavigation, BottomNavigation } from "@/components/navigation"
 import { VolumeChart } from "@/components/volume-chart"
 import { markets } from "@/lib/data"
 import { Slider } from "@/components/ui/slider"
 import { Confetti, useFirstBetCelebration } from "@/components/confetti"
-import { ShareButton } from "@/components/share-button"
+import { ShareImageModal } from "@/components/share-image-modal"
 import { LiveOdds } from "@/components/live-odds"
+import { MarketCard } from "@/components/market-card"
+import { CCLogo } from "@/components/cc-logo"
 
 export default function MarketDetailPage() {
   const params = useParams()
@@ -22,6 +24,14 @@ export default function MarketDetailPage() {
   const [betAmount, setBetAmount] = useState(100)
   const [isPlacing, setIsPlacing] = useState(false)
   const [betPlaced, setBetPlaced] = useState(false)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [isFavorite, setIsFavorite] = useState(() => {
+    if (typeof window !== "undefined" && market) {
+      const favorites = JSON.parse(localStorage.getItem("oracle_favorites") || "[]")
+      return favorites.includes(market.id)
+    }
+    return false
+  })
 
   const { showConfetti, celebrate } = useFirstBetCelebration()
 
@@ -57,9 +67,36 @@ export default function MarketDetailPage() {
     return days > 0 ? `${days}d ${hours}h remaining` : `${hours}h remaining`
   }
 
+  const toggleFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem("oracle_favorites") || "[]")
+    if (isFavorite) {
+      const filtered = favorites.filter((fid: string) => fid !== market.id)
+      localStorage.setItem("oracle_favorites", JSON.stringify(filtered))
+    } else {
+      favorites.push(market.id)
+      localStorage.setItem("oracle_favorites", JSON.stringify(favorites))
+    }
+    setIsFavorite(!isFavorite)
+  }
+
+  const copyLink = () => {
+    const url = `${window.location.origin}/market/${market.id}`
+    navigator.clipboard.writeText(url).catch(() => {})
+  }
+
+  const relatedMarkets = markets.filter((m) => m.category === market.category && m.id !== market.id).slice(0, 3)
+
   return (
     <div className="min-h-screen pb-24 md:pb-8">
       <Confetti show={showConfetti} />
+      <ShareImageModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        question={market.question}
+        yesPrice={market.yesPrice}
+        noPrice={market.noPrice}
+        volume={market.volume}
+      />
 
       <TopNavigation />
       <BottomNavigation />
@@ -78,149 +115,194 @@ export default function MarketDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card rounded-2xl p-6 mb-6 glow-primary"
+          className="glass-card rounded-2xl overflow-hidden mb-6 glow-primary"
         >
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <span className="px-3 py-1 rounded-lg bg-primary/10 text-primary text-sm font-medium">
-              {market.category}
-            </span>
-            <div className="flex items-center gap-3">
-              <ShareButton question={market.question} yesPrice={market.yesPrice} noPrice={market.noPrice} />
-              <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                <Clock className="w-4 h-4" />
-                <span>{formatTimeRemaining(market.endTime)}</span>
+          <div className="p-6">
+            <div className="flex items-start gap-4 mb-4">
+              {market.image && (
+                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-secondary/50">
+                  <img
+                    src={market.image || "/placeholder.svg"}
+                    alt={market.category}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-4 mb-2">
+                  <span className="px-3 py-1 rounded-lg bg-primary/10 text-primary text-sm font-medium">
+                    {market.category}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setIsShareModalOpen(true)}
+                      className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                    >
+                      <svg className="w-4 h-4 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                        />
+                      </svg>
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={copyLink}
+                      className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                    >
+                      <Copy className="w-4 h-4 text-foreground" />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={toggleFavorite}
+                      className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors"
+                    >
+                      <Heart className={`w-4 h-4 ${isFavorite ? "fill-red-500 text-red-500" : "text-foreground"}`} />
+                    </motion.button>
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                      <Clock className="w-4 h-4" />
+                      <span>{formatTimeRemaining(market.endTime)}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6 text-pretty">{market.question}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6 text-pretty">{market.question}</h1>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setSelectedSide("yes")}
-              className={`relative p-6 rounded-2xl border-2 transition-all ${
-                selectedSide === "yes"
-                  ? "bg-success/20 border-success glow-success"
-                  : "bg-success/5 border-success/30 hover:bg-success/10"
-              }`}
-            >
-              <div className="text-sm text-muted-foreground mb-1">Yes</div>
-              <div className="mb-2">
-                <LiveOdds initialPrice={market.yesPrice} type="yes" size="lg" />
-              </div>
-              <div className="text-xs text-muted-foreground">
-                +{((1 / market.yesPrice - 1) * 100).toFixed(0)}% potential
-              </div>
-              {selectedSide === "yes" && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-3 right-3 w-6 h-6 rounded-full bg-success flex items-center justify-center"
-                >
-                  <Check className="w-4 h-4 text-success-foreground" />
-                </motion.div>
-              )}
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setSelectedSide("no")}
-              className={`relative p-6 rounded-2xl border-2 transition-all ${
-                selectedSide === "no"
-                  ? "bg-destructive/20 border-destructive glow-destructive"
-                  : "bg-destructive/5 border-destructive/30 hover:bg-destructive/10"
-              }`}
-            >
-              <div className="text-sm text-muted-foreground mb-1">No</div>
-              <div className="mb-2">
-                <LiveOdds initialPrice={market.noPrice} type="no" size="lg" />
-              </div>
-              <div className="text-xs text-muted-foreground">
-                +{((1 / market.noPrice - 1) * 100).toFixed(0)}% potential
-              </div>
-              {selectedSide === "no" && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-3 right-3 w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
-                >
-                  <Check className="w-4 h-4 text-destructive-foreground" />
-                </motion.div>
-              )}
-            </motion.button>
-          </div>
-
-          <AnimatePresence>
-            {selectedSide && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="space-y-4"
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedSide("yes")}
+                className={`relative p-6 rounded-2xl border-2 transition-all ${
+                  selectedSide === "yes"
+                    ? "bg-success/20 border-success glow-success"
+                    : "bg-success/5 border-success/30 hover:bg-success/10"
+                }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Bet Amount</span>
-                  <span className="text-lg font-bold text-foreground">{betAmount} CC</span>
+                <div className="text-sm text-muted-foreground mb-1">Yes</div>
+                <div className="mb-2">
+                  <LiveOdds initialPrice={market.yesPrice} type="yes" size="lg" />
                 </div>
-
-                <Slider
-                  value={[betAmount]}
-                  onValueChange={(value) => setBetAmount(value[0])}
-                  min={50}
-                  max={10000}
-                  step={50}
-                  className="py-4"
-                />
-
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>Min: 50 CC</span>
-                  <span>Max: 10,000 CC</span>
+                <div className="text-xs text-muted-foreground">
+                  +{((1 / market.yesPrice - 1) * 100).toFixed(0)}% potential
                 </div>
+                {selectedSide === "yes" && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-success flex items-center justify-center"
+                  >
+                    <Check className="w-4 h-4 text-success-foreground" />
+                  </motion.div>
+                )}
+              </motion.button>
 
-                <div className="glass-card rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-muted-foreground">Potential Payout</span>
-                    <span className="text-xl font-bold text-foreground">{potentialPayout} CC</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Profit if {selectedSide}</span>
-                    <span className="text-lg font-semibold text-success">
-                      +{(Number.parseFloat(potentialPayout) - betAmount).toFixed(2)} CC
-                    </span>
-                  </div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedSide("no")}
+                className={`relative p-6 rounded-2xl border-2 transition-all ${
+                  selectedSide === "no"
+                    ? "bg-destructive/20 border-destructive glow-destructive"
+                    : "bg-destructive/5 border-destructive/30 hover:bg-destructive/10"
+                }`}
+              >
+                <div className="text-sm text-muted-foreground mb-1">No</div>
+                <div className="mb-2">
+                  <LiveOdds initialPrice={market.noPrice} type="no" size="lg" />
                 </div>
+                <div className="text-xs text-muted-foreground">
+                  +{((1 / market.noPrice - 1) * 100).toFixed(0)}% potential
+                </div>
+                {selectedSide === "no" && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-3 right-3 w-6 h-6 rounded-full bg-destructive flex items-center justify-center"
+                  >
+                    <Check className="w-4 h-4 text-destructive-foreground" />
+                  </motion.div>
+                )}
+              </motion.button>
+            </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  onClick={handlePlaceBet}
-                  disabled={isPlacing || betPlaced}
-                  className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
-                    betPlaced
-                      ? "bg-success text-success-foreground"
-                      : "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
-                  } disabled:opacity-70`}
+            <AnimatePresence>
+              {selectedSide && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4"
                 >
-                  {isPlacing ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Placing Bet...
-                    </span>
-                  ) : betPlaced ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Check className="w-5 h-5" />
-                      Bet Placed!
-                    </span>
-                  ) : (
-                    `Place ${selectedSide?.toUpperCase()} Bet`
-                  )}
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Bet Amount</span>
+                    <span className="text-lg font-bold text-foreground">{betAmount} CC</span>
+                  </div>
+
+                  <Slider
+                    value={[betAmount]}
+                    onValueChange={(value) => setBetAmount(value[0])}
+                    min={50}
+                    max={10000}
+                    step={50}
+                    className="py-4"
+                  />
+
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>Min: 50 CC</span>
+                    <span>Max: 10,000 CC</span>
+                  </div>
+
+                  <div className="glass-card rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">Potential Payout</span>
+                      <span className="text-xl font-bold text-foreground">{potentialPayout} CC</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Profit if {selectedSide}</span>
+                      <span className="text-lg font-semibold text-success">
+                        +{(Number.parseFloat(potentialPayout) - betAmount).toFixed(2)} CC
+                      </span>
+                    </div>
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={handlePlaceBet}
+                    disabled={isPlacing || betPlaced}
+                    className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
+                      betPlaced
+                        ? "bg-success text-success-foreground"
+                        : "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
+                    } disabled:opacity-70`}
+                  >
+                    {isPlacing ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Placing Bet...
+                      </span>
+                    ) : betPlaced ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Check className="w-5 h-5" />
+                        Bet Placed!
+                      </span>
+                    ) : (
+                      `Place ${selectedSide?.toUpperCase()} Bet`
+                    )}
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </motion.div>
 
         <motion.div
@@ -230,8 +312,8 @@ export default function MarketDetailPage() {
           className="glass-card rounded-2xl p-6 mb-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-semibold text-foreground">Market Stats</h2>
+            <CCLogo className="w-5 h-5" />
+            <h2 className="text-lg font-semibold text-foreground">Pool</h2>
           </div>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
@@ -262,7 +344,7 @@ export default function MarketDetailPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="glass-card rounded-2xl p-6"
+          className="glass-card rounded-2xl p-6 mb-6"
         >
           <div className="flex items-center gap-2 mb-6">
             <MessageCircle className="w-5 h-5 text-primary" />
@@ -310,6 +392,22 @@ export default function MarketDetailPage() {
             </div>
           </div>
         </motion.div>
+
+        {relatedMarkets.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="glass-card rounded-2xl p-6"
+          >
+            <h2 className="text-lg font-semibold text-foreground mb-4">Related Markets</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {relatedMarkets.map((relatedMarket, index) => (
+                <MarketCard key={relatedMarket.id} market={relatedMarket} index={index} />
+              ))}
+            </div>
+          </motion.div>
+        )}
       </main>
     </div>
   )

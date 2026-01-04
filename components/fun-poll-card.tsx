@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Sparkles } from "lucide-react"
+import { CCLogo } from "./cc-logo"
 import type { FunPoll } from "@/lib/data"
 import { crowdAccuracyData } from "@/lib/data"
 import { CrowdAccuracyBadge } from "./crowd-accuracy-modal"
@@ -90,7 +90,7 @@ export function FunPollCard({ poll, index = 0 }: FunPollCardProps) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Sparkles className="w-3 h-3 text-warning" />
+            <CCLogo className="w-3 h-3" />
             <span>5 CC bet</span>
           </div>
           <CrowdAccuracyBadge accuracy={accuracyData.accuracy} category="Fun Polls" accuracyData={accuracyData} />

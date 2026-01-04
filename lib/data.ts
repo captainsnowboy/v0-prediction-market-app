@@ -7,6 +7,7 @@ export interface Market {
   endTime: string
   category: string
   comments: Comment[]
+  image?: string
 }
 
 export interface Comment {
@@ -42,6 +43,7 @@ export const markets: Market[] = [
     volume: 45230,
     endTime: "2025-12-08T23:59:59Z",
     category: "Crypto",
+    image: "/bitcoin-logo.png",
     comments: [
       {
         id: "1",
@@ -68,6 +70,7 @@ export const markets: Market[] = [
     volume: 32100,
     endTime: "2025-07-01T23:59:59Z",
     category: "Crypto",
+    image: "/ethereum-logo.png",
     comments: [
       { id: "1", username: "ethmaxi", avatar: "⟠", text: "Already confirmed by devs", timestamp: "1h ago" },
       { id: "2", username: "defiking", avatar: "🔥", text: "This is basically free money", timestamp: "3h ago" },
@@ -81,6 +84,7 @@ export const markets: Market[] = [
     volume: 18750,
     endTime: "2025-12-31T23:59:59Z",
     category: "Canton",
+    image: "/canton-network-blockchain.jpg",
     comments: [
       { id: "1", username: "cantonbull", avatar: "🏛️", text: "Canton ecosystem growing fast", timestamp: "30m ago" },
       { id: "2", username: "defi_degen", avatar: "🎰", text: "Partnerships looking solid", timestamp: "2h ago" },
@@ -94,6 +98,7 @@ export const markets: Market[] = [
     volume: 67800,
     endTime: "2025-01-29T19:00:00Z",
     category: "Finance",
+    image: "/federal-reserve-building.png",
     comments: [
       {
         id: "1",

@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, User, Upload, Sparkles } from "lucide-react"
@@ -7,7 +9,7 @@ import { X, User, Upload, Sparkles } from "lucide-react"
 interface ProfileEditModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (displayName: string, pfpUrl: string) => void
+  onSave: (displayName: string, pfpUrl: string, bio: string) => void
 }
 
 function generatePortraitPFP(walletAddress: string, displayName: string): string {
@@ -37,13 +39,16 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
   const [displayName, setDisplayName] = useState("")
   const [pfpUrl, setPfpUrl] = useState("")
   const [generating, setGenerating] = useState(false)
+  const [bio, setBio] = useState("")
 
   useEffect(() => {
     if (isOpen) {
       const savedName = localStorage.getItem("oracle_display_name") || ""
       const savedPfp = localStorage.getItem("oracle_pfp_url") || ""
+      const savedBio = localStorage.getItem("oracle_bio") || ""
       if (savedName) setDisplayName(savedName)
       if (savedPfp) setPfpUrl(savedPfp)
+      if (savedBio) setBio(savedBio)
     }
   }, [isOpen])
 
@@ -59,25 +64,32 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
     }, 800)
   }
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPfpUrl(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleSave = () => {
     if (!displayName.trim()) return
 
-    // Generate PFP if not already set
     const walletAddress = localStorage.getItem("oracle_wallet_address") || ""
     const finalPfpUrl = pfpUrl || generatePortraitPFP(walletAddress, displayName)
 
-    // Save to localStorage
     localStorage.setItem("oracle_display_name", displayName)
     localStorage.setItem("oracle_pfp_url", finalPfpUrl)
+    localStorage.setItem("oracle_bio", bio)
     localStorage.setItem("oracle_profile_complete", "true")
 
-    // Trigger storage event to update UI
     window.dispatchEvent(new Event("storage"))
 
-    // Call onSave callback
-    onSave(displayName, finalPfpUrl)
+    onSave(displayName, finalPfpUrl, bio)
 
-    // Close modal
     onClose()
   }
 
@@ -114,7 +126,6 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
                 Complete your profile to unlock the full Oracle dashboard experience
               </p>
 
-              {/* PFP Preview */}
               <div className="flex justify-center mb-6">
                 <div className="w-24 h-24 rounded-full bg-secondary border-2 border-primary/30 overflow-hidden flex items-center justify-center">
                   {pfpUrl ? (
@@ -125,7 +136,6 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
                 </div>
               </div>
 
-              {/* Display Name */}
               <div className="mb-4">
                 <label className="text-sm font-medium text-foreground mb-2 block">Display Name</label>
                 <input
@@ -139,7 +149,19 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
                 <p className="text-xs text-muted-foreground mt-1">{displayName.length}/20 characters</p>
               </div>
 
-              {/* PFP Generation */}
+              <div className="mb-4">
+                <label className="text-sm font-medium text-foreground mb-2 block">Bio (optional)</label>
+                <textarea
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell us about yourself..."
+                  className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                  maxLength={100}
+                  rows={3}
+                />
+                <p className="text-xs text-muted-foreground mt-1">{bio.length}/100 characters</p>
+              </div>
+
               <div className="mb-6">
                 <label className="text-sm font-medium text-foreground mb-2 block">Profile Picture</label>
                 <div className="flex gap-2">
@@ -157,20 +179,22 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
                     )}
                     Generate Avatar
                   </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="px-4 py-3 rounded-xl bg-secondary border border-border text-foreground hover:bg-white/5 transition-all duration-300"
-                  >
-                    <Upload className="w-4 h-4" />
-                  </motion.button>
+                  <label className="cursor-pointer">
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="px-4 py-3 rounded-xl bg-secondary border border-border text-foreground hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
+                    >
+                      <Upload className="w-4 h-4" />
+                    </motion.div>
+                    <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  </label>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
                   Auto-generate from your name or upload a custom image
                 </p>
               </div>
 
-              {/* Save Button */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

@@ -12,15 +12,24 @@ export default function BrandPage() {
   const copyColor = async (color: string) => {
     try {
       await navigator.clipboard.writeText(color)
+      setCopiedColor(color)
     } catch {
-      const textArea = document.createElement("textarea")
-      textArea.value = color
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand("copy")
-      document.body.removeChild(textArea)
+      try {
+        const textArea = document.createElement("textarea")
+        textArea.value = color
+        textArea.style.position = "fixed"
+        textArea.style.left = "-999999px"
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        document.execCommand("copy")
+        document.body.removeChild(textArea)
+        setCopiedColor(color)
+      } catch {
+        // Silent fail if all methods fail
+        setCopiedColor(color)
+      }
     }
-    setCopiedColor(color)
     setTimeout(() => setCopiedColor(null), 2000)
   }
 

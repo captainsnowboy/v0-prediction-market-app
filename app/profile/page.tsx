@@ -57,6 +57,7 @@ export default function ProfilePage() {
   const [hasProfile, setHasProfile] = useState(false)
   const [displayName, setDisplayName] = useState("")
   const [pfpUrl, setPfpUrl] = useState("")
+  const [bio, setBio] = useState("")
   const [email, setEmail] = useState("")
   const [showProfileEditModal, setShowProfileEditModal] = useState(false)
   const [tasksExpanded, setTasksExpanded] = useState(false) // New state for accordion
@@ -78,10 +79,12 @@ export default function ProfilePage() {
     const profileComplete = localStorage.getItem("oracle_profile_complete") === "true"
     const name = localStorage.getItem("oracle_display_name") || ""
     const pfp = localStorage.getItem("oracle_pfp_url") || ""
+    const savedBio = localStorage.getItem("oracle_bio") || ""
     const savedEmail = localStorage.getItem("oracle_email") || ""
     setHasProfile(profileComplete)
     setDisplayName(name)
     setPfpUrl(pfp)
+    setBio(savedBio)
     setEmail(savedEmail)
 
     const handleStorageChange = () => {
@@ -95,9 +98,11 @@ export default function ProfilePage() {
       const profileComplete = localStorage.getItem("oracle_profile_complete") === "true"
       const name = localStorage.getItem("oracle_display_name") || ""
       const pfp = localStorage.getItem("oracle_pfp_url") || ""
+      const savedBio = localStorage.getItem("oracle_bio") || ""
       setHasProfile(profileComplete)
       setDisplayName(name)
       setPfpUrl(pfp)
+      setBio(savedBio)
     }
 
     window.addEventListener("storage", handleStorageChange)
@@ -124,6 +129,7 @@ export default function ProfilePage() {
     localStorage.removeItem("oracle_profile_complete")
     localStorage.removeItem("oracle_display_name")
     localStorage.removeItem("oracle_pfp_url")
+    localStorage.removeItem("oracle_bio")
     localStorage.removeItem("oracle_email")
     setIsWalletConnected(false)
     setWalletAddress("")
@@ -140,6 +146,7 @@ export default function ProfilePage() {
     const data = {
       walletAddress,
       displayName,
+      bio,
       balance: 200,
       totalBets,
       currentStreak,
@@ -155,9 +162,10 @@ export default function ProfilePage() {
     URL.revokeObjectURL(url)
   }
 
-  const handleProfileSave = (name: string, pfp: string) => {
+  const handleProfileSave = (name: string, pfp: string, userBio: string) => {
     setDisplayName(name)
     setPfpUrl(pfp)
+    setBio(userBio)
     setHasProfile(true)
     setShowProfileEditModal(false)
   }
@@ -249,6 +257,7 @@ export default function ProfilePage() {
                 />
               )}
               {hasProfile && displayName && <h2 className="text-2xl font-bold text-foreground mb-2">{displayName}</h2>}
+              {hasProfile && bio && <p className="text-sm text-muted-foreground text-center mb-3 max-w-sm">{bio}</p>}
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm font-medium text-foreground hover:border-primary/50 transition-colors"
@@ -779,7 +788,7 @@ export default function ProfilePage() {
                   </motion.div>
                 </motion.div>
               </motion.div>
-            ) : (
+            ) : activeTab === "settings" ? (
               <motion.div
                 key="settings"
                 initial={{ opacity: 0, x: 20 }}
@@ -787,6 +796,38 @@ export default function ProfilePage() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
               >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 }}
+                  className="glass-card rounded-2xl p-6 mb-6"
+                >
+                  <h2 className="text-lg font-semibold text-foreground mb-4">Profile Settings</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium text-foreground mb-2 block">Display Name</label>
+                      <p className="text-foreground px-4 py-3 rounded-xl bg-secondary border border-border">
+                        {displayName}
+                      </p>
+                    </div>
+                    {bio && (
+                      <div>
+                        <label className="text-sm font-medium text-foreground mb-2 block">Bio</label>
+                        <p className="text-foreground px-4 py-3 rounded-xl bg-secondary border border-border">{bio}</p>
+                      </div>
+                    )}
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setShowProfileEditModal(true)}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-all duration-300"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit Profile
+                    </motion.button>
+                  </div>
+                </motion.div>
+
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -857,7 +898,7 @@ export default function ProfilePage() {
                         </div>
                         <div className="text-left">
                           <p className="text-sm font-medium text-destructive">Disconnect Wallet</p>
-                          <p className="text-xs text-muted-foreground">Sign out and clear profile data</p>
+                          <p className="text-xs text-muted-foreground">Sign out of your wallet</p>
                         </div>
                       </div>
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -865,7 +906,7 @@ export default function ProfilePage() {
                   </div>
                 </motion.div>
               </motion.div>
-            )}
+            ) : null}
           </AnimatePresence>
         )}
 
