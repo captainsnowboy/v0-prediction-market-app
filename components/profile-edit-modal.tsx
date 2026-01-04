@@ -109,81 +109,82 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md z-[101]"
           >
-            <div className="glass-card rounded-2xl p-6 border border-white/10">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <User className="w-5 h-5 text-primary" />
+            <div className="glass-card rounded-2xl p-4 md:p-6 border border-white/10 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-4 md:mb-6">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <User className="w-4 h-4 md:w-5 md:h-5 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold text-foreground">Set up your profile</h3>
+                  <h3 className="text-lg md:text-xl font-semibold text-foreground">Set up your profile</h3>
                 </div>
                 <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/10 transition-colors">
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
 
-              <p className="text-sm text-muted-foreground mb-6">
+              <p className="text-xs md:text-sm text-muted-foreground mb-4 md:mb-6">
                 Complete your profile to unlock the full Oracle dashboard experience
               </p>
 
-              <div className="flex justify-center mb-6">
-                <div className="w-24 h-24 rounded-full bg-secondary border-2 border-primary/30 overflow-hidden flex items-center justify-center">
+              <div className="flex justify-center mb-4 md:mb-6">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-secondary border-2 border-primary/30 overflow-hidden flex items-center justify-center">
                   {pfpUrl ? (
                     <img src={pfpUrl || "/placeholder.svg"} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <User className="w-12 h-12 text-muted-foreground" />
+                    <User className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
                   )}
                 </div>
               </div>
 
-              <div className="mb-4">
-                <label className="text-sm font-medium text-foreground mb-2 block">Display Name</label>
+              <div className="mb-3 md:mb-4">
+                <label className="text-xs md:text-sm font-medium text-foreground mb-2 block">Display Name</label>
                 <input
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="AnonTrader42"
-                  className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  className="w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-base rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                   maxLength={20}
                 />
                 <p className="text-xs text-muted-foreground mt-1">{displayName.length}/20 characters</p>
               </div>
 
-              <div className="mb-4">
-                <label className="text-sm font-medium text-foreground mb-2 block">Bio (optional)</label>
+              <div className="mb-3 md:mb-4">
+                <label className="text-xs md:text-sm font-medium text-foreground mb-2 block">Bio (optional)</label>
                 <textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   placeholder="Tell us about yourself..."
-                  className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                  className="w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-base rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
                   maxLength={100}
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground mt-1">{bio.length}/100 characters</p>
               </div>
 
-              <div className="mb-6">
-                <label className="text-sm font-medium text-foreground mb-2 block">Profile Picture</label>
+              <div className="mb-4 md:mb-6">
+                <label className="text-xs md:text-sm font-medium text-foreground mb-2 block">Profile Picture</label>
                 <div className="flex gap-2">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={generatePFP}
                     disabled={generating || !displayName}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium hover:bg-primary/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 md:py-3 text-sm md:text-base rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium hover:bg-primary/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {generating ? (
                       <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <Sparkles className="w-4 h-4" />
                     )}
-                    Generate Avatar
+                    <span className="hidden sm:inline">Generate Avatar</span>
+                    <span className="sm:hidden">Generate</span>
                   </motion.button>
                   <label className="cursor-pointer">
                     <motion.div
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="px-4 py-3 rounded-xl bg-secondary border border-border text-foreground hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
+                      className="px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-secondary border border-border text-foreground hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                     >
                       <Upload className="w-4 h-4" />
                     </motion.div>
@@ -200,14 +201,14 @@ export function ProfileEditModal({ isOpen, onClose, onSave }: ProfileEditModalPr
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSave}
                 disabled={!displayName.trim()}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 md:py-3 text-sm md:text-base rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Finish Editing
               </motion.button>
 
               <button
                 onClick={onClose}
-                className="w-full mt-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="w-full mt-2 py-2 text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Skip for now
               </button>

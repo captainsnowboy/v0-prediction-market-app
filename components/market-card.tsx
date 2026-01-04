@@ -90,6 +90,7 @@ export function MarketCard({ market, index = 0 }: MarketCardProps) {
                 whileTap={{ scale: 0.9 }}
                 onClick={copyLink}
                 className="p-2 rounded-lg bg-secondary/80 backdrop-blur-sm hover:bg-secondary transition-colors"
+                aria-label="Copy link"
               >
                 <Copy className="w-3.5 h-3.5 text-muted-foreground" />
               </motion.button>
@@ -98,6 +99,7 @@ export function MarketCard({ market, index = 0 }: MarketCardProps) {
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleFavorite}
                 className="p-2 rounded-lg bg-secondary/80 backdrop-blur-sm hover:bg-secondary transition-colors"
+                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
               >
                 <Heart
                   className={`w-3.5 h-3.5 ${isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground"}`}
@@ -226,6 +228,7 @@ export function MarketCardHorizontal({ market, index = 0 }: MarketCardProps) {
                 whileTap={{ scale: 0.9 }}
                 onClick={copyLink}
                 className="p-1.5 rounded-lg bg-secondary/80 backdrop-blur-sm hover:bg-secondary transition-colors"
+                aria-label="Copy link"
               >
                 <Copy className="w-3 h-3 text-muted-foreground" />
               </motion.button>
@@ -234,6 +237,7 @@ export function MarketCardHorizontal({ market, index = 0 }: MarketCardProps) {
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleFavorite}
                 className="p-1.5 rounded-lg bg-secondary/80 backdrop-blur-sm hover:bg-secondary transition-colors"
+                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
               >
                 <Heart className={`w-3 h-3 ${isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground"}`} />
               </motion.button>

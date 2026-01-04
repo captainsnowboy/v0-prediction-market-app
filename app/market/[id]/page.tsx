@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, Clock, MessageCircle, Check, Loader2, Copy, Heart } from "lucide-react"
+import { ArrowLeft, Clock, MessageCircle, Check, Loader2, Copy, Heart, TrendingUp } from "lucide-react"
 import { TopNavigation, BottomNavigation } from "@/components/navigation"
 import { VolumeChart } from "@/components/volume-chart"
 import { markets } from "@/lib/data"
@@ -12,7 +12,6 @@ import { Confetti, useFirstBetCelebration } from "@/components/confetti"
 import { ShareImageModal } from "@/components/share-image-modal"
 import { LiveOdds } from "@/components/live-odds"
 import { MarketCard } from "@/components/market-card"
-import { CCLogo } from "@/components/cc-logo"
 
 export default function MarketDetailPage() {
   const params = useParams()
@@ -312,8 +311,8 @@ export default function MarketDetailPage() {
           className="glass-card rounded-2xl p-6 mb-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <CCLogo className="w-5 h-5" />
-            <h2 className="text-lg font-semibold text-foreground">Pool</h2>
+            <TrendingUp className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-semibold text-foreground">Market Stats</h2>
           </div>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
